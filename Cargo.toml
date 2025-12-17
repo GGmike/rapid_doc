@@ -1,7 +1,12 @@
 [package]
-name = "rust_pdf"
+name = "rapid_pdf"
 version = "0.1.0"
 edition = "2024"
+
+
+[lib]
+name = "rapid_pdf"
+crate-type = ["cdylib"]
 
 
 [dependencies]
