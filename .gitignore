@@ -2,4 +2,5 @@
 *.pdf
 *.log
 .DS_Store
-main.sh
+rust_pdf
+.cargo
