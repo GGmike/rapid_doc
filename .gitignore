@@ -1,0 +1,5 @@
+/target
+*.pdf
+*.log
+.DS_Store
+main.sh
