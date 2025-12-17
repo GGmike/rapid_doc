@@ -25,12 +25,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let content_data = doc.get_page_content(object_id)?;
         let content = lopdf::content::Content::decode(&content_data)?;
 
-        println!("Content Operations:");
-        for operation in &content.operations {
-            println!("  Operator: {}, Operands: {:?}", 
-                operation.operator, 
-                operation.operands.iter().map(|op| print_with_layout(op)).collect::<Vec<String>>());
-        }
+        // println!("Content Operations:");
+        // for operation in &content.operations {
+        //     println!("  Operator: {}, Operands: {:?}", 
+        //         operation.operator, 
+        //         operation.operands.iter().map(|op| print_with_layout(op)).collect::<Vec<String>>());
+        // }
 
         let text_items = process_content_stream(&content);
         for item in text_items {
@@ -146,7 +146,7 @@ fn extract_text_from_object(obj: &Object) -> String {
     }
 }
 
-fn print_with_layout(obj: &Object) -> String{
+// fn print_with_layout(obj: &Object) -> String{
 
 
-}
+// }
