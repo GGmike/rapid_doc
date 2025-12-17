@@ -3,11 +3,15 @@ use std::env;
 use pyo3::prelude::*;
 
 #[pyclass]
-#[derive(Debug)] 
+#[derive(Debug, Clone)] 
 struct TextItem {
+    #[pyo3(get)]
     text: String,
+    #[pyo3(get)]
     x: f32,
+    #[pyo3(get)]
     y: f32,
+    #[pyo3(get)]
     font_size: f32,
 }
 
