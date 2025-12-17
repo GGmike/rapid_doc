@@ -1,7 +1,8 @@
 use lopdf::{Document, Object};
 use std::env;
+use pyo3::prelude::*;
 
-
+#[pyclass]
 #[derive(Debug)] 
 struct TextItem {
     text: String,
@@ -32,7 +33,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         //         operation.operands.iter().map(|op| print_with_layout(op)).collect::<Vec<String>>());
         // }
 
-        let text_items = process_content_stream(&content);
+        let mut text_items = process_content_stream(&content);
+        // text_items.sort_by(|a, b| {
+        //     b.y.partial_cmp(&a.y).unwrap_or(std::cmp::Ordering::Equal)
+        //     .then(a.x.partial_cmp(&b.x).unwrap_or(std::cmp::Ordering::Equal))
+        //     });
         for item in text_items {
             println!("  Found: '{:?}' at ({:.2}, {:.2}) size {:.2}", 
                 item.text, item.x, item.y, item.font_size);
@@ -41,6 +46,30 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[pyfunction]
+fn extract_text_from_pdf(path: String) -> PyResult<Vec<TextItem>> {
+    let doc = Document::load(path).map_err(|e| PyErr::new::<pyo3::exceptions::PyIOError, _>(e.to_string()))?;
+    let mut all_items = Vec::new();
+
+    for (_page_num, object_id) in doc.get_pages() {
+        if let Ok(content_data) = doc.get_page_content(object_id) {
+            if let Ok(content) = lopdf::content::Content::decode(&content_data) {
+                let mut items = process_content_stream(&content);
+                all_items.append(&mut items);
+            }
+        }
+    }
+
+    all_items.sort_by(|a, b| {
+        b.y.partial_cmp(&a.y).unwrap_or(std::cmp::Ordering::Equal)
+           .then(a.x.partial_cmp(&b.x).unwrap_or(std::cmp::Ordering::Equal))
+    });
+
+
+    Ok(all_items)
+}
+
 
 fn process_content_stream(content: &lopdf::content::Content) -> Vec<TextItem> {
     let mut extracted_items = Vec::new();
@@ -131,6 +160,10 @@ fn process_content_stream(content: &lopdf::content::Content) -> Vec<TextItem> {
             _ => {} 
         }
     }
+    extracted_items.sort_by(|a, b| {
+        b.y.partial_cmp(&a.y).unwrap_or(std::cmp::Ordering::Equal)
+           .then(a.x.partial_cmp(&b.x).unwrap_or(std::cmp::Ordering::Equal))
+    });
 
     extracted_items
 }
