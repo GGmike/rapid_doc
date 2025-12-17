@@ -5,3 +5,4 @@
 rust_pdf
 .cargo
 *.lock
+rapid_test
