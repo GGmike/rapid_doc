@@ -11,41 +11,41 @@ struct TextItem {
     font_size: f32,
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args: Vec<String> = env::args().collect();
-    if args.len() < 2 {
-        eprintln!("Usage: {} <path_to_pdf>", args[0]);
-        std::process::exit(1);
-    }
-    let path = &args[1];
+// fn main() -> Result<(), Box<dyn std::error::Error>> {
+//     let args: Vec<String> = env::args().collect();
+//     if args.len() < 2 {
+//         eprintln!("Usage: {} <path_to_pdf>", args[0]);
+//         std::process::exit(1);
+//     }
+//     let path = &args[1];
 
-    let doc = Document::load(path)?;
+//     let doc = Document::load(path)?;
 
-    for (page_num, object_id) in doc.get_pages() {
-        println!("Processing Page {}", page_num);
-        let content_data = doc.get_page_content(object_id)?;
-        let content = lopdf::content::Content::decode(&content_data)?;
+//     for (page_num, object_id) in doc.get_pages() {
+//         println!("Processing Page {}", page_num);
+//         let content_data = doc.get_page_content(object_id)?;
+//         let content = lopdf::content::Content::decode(&content_data)?;
 
-        // println!("Content Operations:");
-        // for operation in &content.operations {
-        //     println!("  Operator: {}, Operands: {:?}", 
-        //         operation.operator, 
-        //         operation.operands.iter().map(|op| print_with_layout(op)).collect::<Vec<String>>());
-        // }
+//         // println!("Content Operations:");
+//         // for operation in &content.operations {
+//         //     println!("  Operator: {}, Operands: {:?}", 
+//         //         operation.operator, 
+//         //         operation.operands.iter().map(|op| print_with_layout(op)).collect::<Vec<String>>());
+//         // }
 
-        let mut text_items = process_content_stream(&content);
-        // text_items.sort_by(|a, b| {
-        //     b.y.partial_cmp(&a.y).unwrap_or(std::cmp::Ordering::Equal)
-        //     .then(a.x.partial_cmp(&b.x).unwrap_or(std::cmp::Ordering::Equal))
-        //     });
-        for item in text_items {
-            println!("  Found: '{:?}' at ({:.2}, {:.2}) size {:.2}", 
-                item.text, item.x, item.y, item.font_size);
-        }
-    }
+//         let mut text_items = process_content_stream(&content);
+//         // text_items.sort_by(|a, b| {
+//         //     b.y.partial_cmp(&a.y).unwrap_or(std::cmp::Ordering::Equal)
+//         //     .then(a.x.partial_cmp(&b.x).unwrap_or(std::cmp::Ordering::Equal))
+//         //     });
+//         for item in text_items {
+//             println!("  Found: '{:?}' at ({:.2}, {:.2}) size {:.2}", 
+//                 item.text, item.x, item.y, item.font_size);
+//         }
+//     }
 
-    Ok(())
-}
+//     Ok(())
+// }
 
 #[pyfunction]
 fn extract_text_from_pdf(path: String) -> PyResult<Vec<TextItem>> {
@@ -70,6 +70,12 @@ fn extract_text_from_pdf(path: String) -> PyResult<Vec<TextItem>> {
     Ok(all_items)
 }
 
+#[pymodule]
+fn rapid_pdf(_py: Python, m: &PyModule) -> PyResult<()> {
+    m.add_class::<TextItem>()?;
+    m.add_function(wrap_pyfunction!(extract_text_from_pdf, m)?)?;
+    Ok(())
+}
 
 fn process_content_stream(content: &lopdf::content::Content) -> Vec<TextItem> {
     let mut extracted_items = Vec::new();
