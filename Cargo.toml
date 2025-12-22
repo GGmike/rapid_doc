@@ -1,6 +1,6 @@
 [package]
 name = "rapid_pdf"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 
@@ -10,5 +10,5 @@ crate-type = ["cdylib"]
 
 
 [dependencies]
-pyo3 = { version = "0.20", features = ["extension-module"] }
+pyo3 = { version = "0.23", features = ["extension-module"] }
 lopdf = "0.38.0"
