@@ -75,7 +75,7 @@ fn extract_text_from_pdf(path: String) -> PyResult<Vec<TextItem>> {
 }
 
 #[pymodule]
-fn rapid_pdf(_py: Python, m: &PyModule) -> PyResult<()> {
+fn rapid_pdf(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<TextItem>()?;
     m.add_function(wrap_pyfunction!(extract_text_from_pdf, m)?)?;
     Ok(())
