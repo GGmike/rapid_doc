@@ -12,4 +12,10 @@ for item in items:
         origin_y = item.y   
     print(item.text, end=' ')
 
+change_result = rapid_pdf.replace_text_by_pos("test.pdf","testing_output.pdf", 1,
+                                      "CORPORATE",
+        "Testing",
+        277.895, 451.84802,
+        0.00, )
+print("\nChange Result:", change_result)
     # print(item.text, item.x, item.y, item.font_size)
